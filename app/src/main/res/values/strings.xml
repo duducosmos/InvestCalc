@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">InvestCalc</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title">InvestCalc: Calculadora de Juros</string>
+    <string name="jurosNominal">Juros Nominal A.A (%)</string>
+    <string name="inflacao">Inflação Média A.A (%)</string>
+    <string name="periodo">Periodo (Meses)</string>
+    <string name="valorInicial">Aplicação inicial</string>
+    <string name="aplicacaoContinua" translatable="false">Aplicar mês a mês?</string>
+    <string name="aplicacaMensal">Valor aplic. men.</string>
+    <string name="ganhoNominal">Ganho Nominal</string>
+    <string name="ganhoPosInflacao">Ganho Real</string>
+    <string name="semjuros">Investido</string>
+
+</resources>
