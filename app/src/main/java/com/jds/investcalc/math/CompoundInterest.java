@@ -18,8 +18,7 @@ public class CompoundInterest {
                             float initialApplication,
                             Integer totalPeriod,
                             boolean repeatedApplication,
-                            ArrayList valueAppliedMonthly)
-    {
+                            ArrayList valueAppliedMonthly) {
         this.jurosAA = interest;
         this.inflacaoAA = inflation;
         this.jurosAM = interest / 12f;
@@ -32,15 +31,15 @@ public class CompoundInterest {
         setMonthlyApplication();
     }
 
-    private void setMonthlyApplication(){
+    private void setMonthlyApplication() {
 
         if (this.isRepeatedApplication()) {
-            if(this.monthlyApplication.size() == 1){
+            if (this.monthlyApplication.size() == 1) {
                 double sameValue = this.monthlyApplication.get(0);
-                for(Integer i=1; i< this.totalPeriod; i++){
+                for (Integer i = 1; i < this.totalPeriod; i++) {
                     this.monthlyApplication.add(sameValue);
                 }
-            }else if(this.monthlyApplication.size() == 0){
+            } else if (this.monthlyApplication.size() == 0) {
                 this.repeatedApplication = false;
                 return;
             }
@@ -57,13 +56,13 @@ public class CompoundInterest {
         if (this.isRepeatedApplication()) {
             float total = 0;
             double interested = 0;
-            for(int i=this.totalPeriod; i>= 0; i--){
-                if(i == this.totalPeriod){
+            for (int i = this.totalPeriod; i >= 0; i--) {
+                if (i == this.totalPeriod) {
                     interested = this.initialApplication *
                             Math.pow(1.0d + ((double) this.jurosAM),
                                     (double) i + 1);
 
-                }else {
+                } else {
                     interested = this.monthlyApplication.get(this.totalPeriod - 1 - i) *
                             Math.pow(1.0d + ((double) this.jurosAM),
                                     (double) i + 1);
@@ -76,29 +75,30 @@ public class CompoundInterest {
         }
 
         return this.initialApplication * ((float) Math.pow(1.0d + ((double) this.jurosAM),
-                                                           (double) this.totalPeriod));
+                (double) this.totalPeriod));
     }
 
-    public Float vested(){
+    public Float vested() {
         Float asomar = 0.0f;
-        for(double valor: this.monthlyApplication){
+
+        for (double valor : this.monthlyApplication) {
             asomar += (float) valor;
         }
         return this.initialApplication + asomar;
     }
 
-    public Float accumulatedReal(){
+    public Float accumulatedReal() {
         float r = Fisher.realTax(this.inflacaoAM, this.jurosAM);
-        if(this.isRepeatedApplication()){
+        if (this.isRepeatedApplication()) {
             float total = 0;
             double interested = 0;
-            for(int i=this.totalPeriod; i>= 0; i--){
-                if(i == this.totalPeriod){
+            for (int i = this.totalPeriod; i >= 0; i--) {
+                if (i == this.totalPeriod) {
                     interested = this.initialApplication *
                             Math.pow(1.0d + (double) r,
                                     (double) i + 1);
 
-                }else {
+                } else {
                     interested = this.monthlyApplication.get(this.totalPeriod - 1 - i) *
                             Math.pow(1.0d + ((double) r),
                                     (double) i + 1);
@@ -110,13 +110,12 @@ public class CompoundInterest {
         }
 
 
-
         return this.initialApplication * ((float) Math.pow(1.0d + ((double) r),
                 (double) this.totalPeriod));
     }
 
 
-    public boolean  isRepeatedApplication() {
+    public boolean isRepeatedApplication() {
         return repeatedApplication;
     }
 
