@@ -15,6 +15,7 @@ public class CompoundInterest {
 
     private ArrayList<Double> interestToBeSum = new ArrayList<Double>();
     private ArrayList<Double> nominalEvolution = new ArrayList<Double>();
+    private ArrayList<Double> realEvolution = new ArrayList<Double>();
 
     public CompoundInterest(float interest, float inflation,
                             float initialApplication,
@@ -110,7 +111,7 @@ public class CompoundInterest {
                                     (double) i + 1);
                 }
                 total += (float) interested;
-                this.interestToBeSum.add(interested);
+                this.realEvolution.add((double) total);
             }
             return total;
         }
@@ -135,5 +136,9 @@ public class CompoundInterest {
 
     public ArrayList<Double> getNominalEvolution() {
         return nominalEvolution;
+    }
+
+    public ArrayList<Double> getRealEvolution() {
+        return realEvolution;
     }
 }

@@ -2,6 +2,7 @@ package investcalc.jds.com.investcalc;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -54,6 +55,8 @@ public class MainActivity extends ActionBarActivity {
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
     private XYSeries mCurrentSeries;
+    private XYSeries realSeries;
+    private XYSeriesRenderer realRenderer;
     private XYSeriesRenderer mCurrentRender;
     private DisplayMetrics displayMetrics;
     private boolean isPortrait;
@@ -79,45 +82,61 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initChart() {
-        mCurrentSeries = new XYSeries("Evolution Value");
+        mCurrentSeries = new XYSeries("Nominal Value");
+        realSeries = new XYSeries("Real Value");
         mDataset.addSeries(mCurrentSeries);
+        mDataset.addSeries(realSeries);
         mCurrentRender = new XYSeriesRenderer();
+        realRenderer = new XYSeriesRenderer();
+        mCurrentRender.setColor(Color.BLUE);
+        realRenderer.setColor(Color.RED);
+
         mRenderer.addSeriesRenderer(mCurrentRender);
+        mRenderer.addSeriesRenderer(realRenderer);
         mRenderer.setXTitle("Mês");
-        mRenderer.setYTitle("Acumulado");
+        //mRenderer.setYTitle("Acumulado");
         mRenderer.setYLabelsAlign(Paint.Align.RIGHT);
-        mRenderer.setAxisTitleTextSize(_sp(10));
-        mRenderer.setChartTitleTextSize(_sp(10));
+        mRenderer.setAxisTitleTextSize(_sp(25));
+        mRenderer.setChartTitleTextSize(_sp(25));
         mRenderer.setYLabels(15);
         mRenderer.setXLabels(15);
+
 
     }
 
     private void addSampleData() {
         ArrayList<Double> yValues = myInterest.getNominalEvolution();
+        ArrayList<Double> yRealV = myInterest.getRealEvolution();
         int ySize = yValues.size();
         mRenderer.setXAxisMax((double) ySize);
-        mRenderer.setYAxisMax(yValues.get(0));
+        mRenderer.setYAxisMax(yValues.get(ySize - 1));
         for (int i = 1; i <= ySize; i++) {
             mCurrentSeries.add(i, yValues.get(i - 1));
+            realSeries.add(i, yRealV.get(i - 1));
         }
 
     }
 
     private void generateChart() {
         LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
+        if (this.aplicarTodoMes) {
 
-        if (mChart == null) {
+            if (mChart == null) {
 
-            mCurrentSeries.clear();
-            addSampleData();
-            mChart = ChartFactory.getLineChartView(this, mDataset, mRenderer);
-            //getCubeLineChartView(this, mDataset, mRenderer, 0.3f);
+                mCurrentSeries.clear();
+                realSeries.clear();
 
-            layout.removeAllViews();
-            layout.addView(mChart);
+                addSampleData();
+                mChart = ChartFactory.getLineChartView(this, mDataset, mRenderer);
+                //getCubeLineChartView(this, mDataset, mRenderer, 0.3f);
+
+                layout.removeAllViews();
+                layout.addView(mChart);
+            } else {
+                mChart.repaint();
+            }
         } else {
-            mChart.repaint();
+            layout.removeAllViews();
         }
 
 
