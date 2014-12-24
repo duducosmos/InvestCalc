@@ -25,6 +25,7 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 
@@ -82,6 +83,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initChart() {
+        // Number format
+        DecimalFormat noFormat = new DecimalFormat("##0.##E0");
+        noFormat.setMinimumIntegerDigits(1);
+        noFormat.setMaximumIntegerDigits(3);
+        noFormat.setMinimumFractionDigits(0);
+        noFormat.setMaximumFractionDigits(2);
         mCurrentSeries = new XYSeries("Nominal Value");
         realSeries = new XYSeries("Real Value");
         mDataset.addSeries(mCurrentSeries);
@@ -90,6 +97,8 @@ public class MainActivity extends ActionBarActivity {
         realRenderer = new XYSeriesRenderer();
         mCurrentRender.setColor(Color.BLUE);
         realRenderer.setColor(Color.RED);
+        //realRenderer.setChartValuesFormat(noFormat);
+        //mCurrentRender.setChartValuesFormat(noFormat);
 
         mRenderer.addSeriesRenderer(mCurrentRender);
         mRenderer.addSeriesRenderer(realRenderer);
@@ -100,7 +109,7 @@ public class MainActivity extends ActionBarActivity {
         mRenderer.setChartTitleTextSize(_sp(25));
         mRenderer.setYLabels(15);
         mRenderer.setXLabels(15);
-
+        mRenderer.setLabelFormat(noFormat);
 
     }
 
@@ -112,14 +121,16 @@ public class MainActivity extends ActionBarActivity {
         mRenderer.setYAxisMax(yValues.get(ySize - 1));
         for (int i = 1; i <= ySize; i++) {
             mCurrentSeries.add(i, yValues.get(i - 1));
-            realSeries.add(i, yRealV.get(i - 1));
+            if (this.inflacao != 0) {
+                realSeries.add(i, yRealV.get(i - 1));
+            }
         }
 
     }
 
     private void generateChart() {
         LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
-        if (this.aplicarTodoMes) {
+        if (this.aplicarTodoMes && this.juros != 0) {
 
             if (mChart == null) {
 
