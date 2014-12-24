@@ -12,7 +12,9 @@ public class CompoundInterest {
 
     private boolean repeatedApplication;
     private ArrayList<Double> monthlyApplication = new ArrayList<Double>();
+
     private ArrayList<Double> interestToBeSum = new ArrayList<Double>();
+    private ArrayList<Double> nominalEvolution = new ArrayList<Double>();
 
     public CompoundInterest(float interest, float inflation,
                             float initialApplication,
@@ -68,7 +70,7 @@ public class CompoundInterest {
                                     (double) i + 1);
                 }
                 total += (float) interested;
-                this.interestToBeSum.add(interested);
+                this.nominalEvolution.add((double) total);
             }
             return total;
 
@@ -81,9 +83,13 @@ public class CompoundInterest {
     public Float vested() {
         Float asomar = 0.0f;
 
-        for (double valor : this.monthlyApplication) {
-            asomar += (float) valor;
+        if (this.isRepeatedApplication()) {
+            for (double valor : this.monthlyApplication) {
+                asomar += (float) valor;
+            }
         }
+
+
         return this.initialApplication + asomar;
     }
 
@@ -121,5 +127,13 @@ public class CompoundInterest {
 
     public void setRepeatedApplication(boolean repeatedApplication) {
         this.repeatedApplication = repeatedApplication;
+    }
+
+    public ArrayList<Double> getInterestToBeSum() {
+        return interestToBeSum;
+    }
+
+    public ArrayList<Double> getNominalEvolution() {
+        return nominalEvolution;
     }
 }

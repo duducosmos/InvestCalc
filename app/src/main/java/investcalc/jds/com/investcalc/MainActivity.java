@@ -2,22 +2,33 @@ package investcalc.jds.com.investcalc;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jds.investcalc.math.CompoundInterest;
+
+import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
+import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.model.XYSeries;
+import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
+    CompoundInterest myInterest;
     private EditText jurosET;
     private EditText inflacaoET;
     private EditText aplicacaoInicialET;
@@ -30,7 +41,6 @@ public class MainActivity extends ActionBarActivity {
     private TextView textViewInvestido;
     private CheckBox aplicarTodoMesCK;
     private Button button;
-
     private float juros;
     private float inflacao;
     private float aplicacaoInicial;
@@ -40,6 +50,13 @@ public class MainActivity extends ActionBarActivity {
     private float valorReal;
     private boolean aplicarTodoMes;
     private AlertDialog alerta;
+    private GraphicalView mChart;
+    private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
+    private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+    private XYSeries mCurrentSeries;
+    private XYSeriesRenderer mCurrentRender;
+    private DisplayMetrics displayMetrics;
+    private boolean isPortrait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +64,66 @@ public class MainActivity extends ActionBarActivity {
 
 
         setContentView(R.layout.activity_main);
+        displayMetrics = (this.getResources()).getDisplayMetrics();
         setLayout();
         addListenerOnButton();
+        initChart();
     }
+
+    int _dp(float pixels) {
+        return (int) (pixels * displayMetrics.density);
+    }
+
+    float _sp(float pixels) {
+        return (pixels * displayMetrics.scaledDensity);
+    }
+
+    private void initChart() {
+        mCurrentSeries = new XYSeries("Evolution Value");
+        mDataset.addSeries(mCurrentSeries);
+        mCurrentRender = new XYSeriesRenderer();
+        mRenderer.addSeriesRenderer(mCurrentRender);
+        mRenderer.setXTitle("Mês");
+        mRenderer.setYTitle("Acumulado");
+        mRenderer.setYLabelsAlign(Paint.Align.RIGHT);
+        mRenderer.setAxisTitleTextSize(_sp(10));
+        mRenderer.setChartTitleTextSize(_sp(10));
+        mRenderer.setYLabels(15);
+        mRenderer.setXLabels(15);
+
+    }
+
+    private void addSampleData() {
+        ArrayList<Double> yValues = myInterest.getNominalEvolution();
+        int ySize = yValues.size();
+        mRenderer.setXAxisMax((double) ySize);
+        mRenderer.setYAxisMax(yValues.get(0));
+        for (int i = 1; i <= ySize; i++) {
+            mCurrentSeries.add(i, yValues.get(i - 1));
+        }
+
+    }
+
+    private void generateChart() {
+        LinearLayout layout = (LinearLayout) findViewById(R.id.chart);
+
+        if (mChart == null) {
+
+            mCurrentSeries.clear();
+            addSampleData();
+            mChart = ChartFactory.getLineChartView(this, mDataset, mRenderer);
+            //getCubeLineChartView(this, mDataset, mRenderer, 0.3f);
+
+            layout.removeAllViews();
+            layout.addView(mChart);
+        } else {
+            mChart.repaint();
+        }
+
+
+    }
+
+
 
     private void informacoes() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -77,8 +151,11 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View arg0) {
 
+                mChart = null;
+
                 getValuesFromView();
                 calcularJuros();
+                generateChart();
 
 
             }
@@ -90,7 +167,7 @@ public class MainActivity extends ActionBarActivity {
     private void calcularJuros() {
         ArrayList<Double> apliMensal = new ArrayList<Double>();
         apliMensal.add(valorAplicacaoMensal);
-        CompoundInterest myInterest = new CompoundInterest(juros,
+        myInterest = new CompoundInterest(juros,
                 inflacao,
                 aplicacaoInicial,
                 periodoMeses,
