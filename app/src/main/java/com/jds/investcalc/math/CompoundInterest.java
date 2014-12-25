@@ -63,12 +63,12 @@ public class CompoundInterest {
                 if (i == this.totalPeriod) {
                     interested = this.initialApplication *
                             Math.pow(1.0d + ((double) this.jurosAM),
-                                    (double) i + 1);
+                                    (double) i);
 
                 } else {
                     interested = this.monthlyApplication.get(this.totalPeriod - 1 - i) *
                             Math.pow(1.0d + ((double) this.jurosAM),
-                                    (double) i + 1);
+                                    (double) i);
                 }
                 total += (float) interested;
                 this.nominalEvolution.add((double) total);
@@ -95,7 +95,7 @@ public class CompoundInterest {
     }
 
     public Float accumulatedReal() {
-        float r = Fisher.realTax(this.inflacaoAM, this.jurosAM);
+        float r = Fisher.realTax(this.inflacaoAA, this.jurosAA) / 12f;
         if (this.isRepeatedApplication()) {
             float total = 0;
             double interested = 0;
@@ -103,12 +103,12 @@ public class CompoundInterest {
                 if (i == this.totalPeriod) {
                     interested = this.initialApplication *
                             Math.pow(1.0d + (double) r,
-                                    (double) i + 1);
+                                    (double) i);
 
                 } else {
                     interested = this.monthlyApplication.get(this.totalPeriod - 1 - i) *
                             Math.pow(1.0d + ((double) r),
-                                    (double) i + 1);
+                                    (double) i);
                 }
                 total += (float) interested;
                 this.realEvolution.add((double) total);

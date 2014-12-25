@@ -118,11 +118,14 @@ public class MainActivity extends ActionBarActivity {
         ArrayList<Double> yRealV = myInterest.getRealEvolution();
         int ySize = yValues.size();
         mRenderer.setXAxisMax((double) ySize);
+        mRenderer.setXAxisMin(0.0d);
         mRenderer.setYAxisMax(yValues.get(ySize - 1));
-        for (int i = 1; i <= ySize; i++) {
-            mCurrentSeries.add(i, yValues.get(i - 1));
+        mRenderer.setYAxisMin(this.aplicacaoInicial);
+
+        for (int i = 0; i < ySize; i++) {
+            mCurrentSeries.add(i + 1, yValues.get(i));
             if (this.inflacao != 0) {
-                realSeries.add(i, yRealV.get(i - 1));
+                realSeries.add(i + 1, yRealV.get(i));
             }
         }
 
